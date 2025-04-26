@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -6,6 +6,10 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
+import { useAi } from "@/hooks/useAi";
+import { Loader2, Lightbulb, Tag } from "lucide-react";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Badge } from "@/components/ui/badge";
 
 interface ReflectionFormProps {
   contentId: number;
@@ -18,6 +22,18 @@ const ReflectionForm = ({ contentId }: ReflectionFormProps) => {
   const [timestamp, setTimestamp] = useState("");
   const [showTimestampInput, setShowTimestampInput] = useState(false);
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
+  const [showAiInsight, setShowAiInsight] = useState(false);
+  const [suggestedTags, setSuggestedTags] = useState<string[]>([]);
+  
+  // Use our AI hook for Gemini-powered features
+  const { 
+    getReflectionInsight, 
+    reflectionInsight, 
+    isLoadingReflectionInsight, 
+    analyzeReflection,
+    reflectionAnalysis,
+    isLoadingAnalysis
+  } = useAi();
 
   const addReflectionMutation = useMutation({
     mutationFn: async (data: { contentId: number; text: string; timestamp: string; tags: string[] }) => {

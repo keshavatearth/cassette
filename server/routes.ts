@@ -13,6 +13,7 @@ import session from "express-session";
 import passport from "passport";
 import { Strategy as LocalStrategy } from "passport-local";
 import MemoryStore from "memorystore";
+import { setupAIRoutes } from "./routes/ai";
 
 // Extended Request type with user
 interface AuthenticatedRequest extends Request {
@@ -382,6 +383,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(500).json({ message: "Error marking all notifications as read" });
     }
   });
+  
+  // Set up AI routes powered by Gemini
+  setupAIRoutes(app);
 
   return httpServer;
 }

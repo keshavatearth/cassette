@@ -85,3 +85,20 @@ export const markAllNotificationsAsRead = () => {
 export const createNotification = (notificationData: any) => {
   return apiRequest("POST", "/api/notifications", notificationData);
 };
+
+// AI API
+export const getReflectionInsight = (contentId: number, reflectionText: string) => {
+  return apiRequest("POST", "/api/ai/reflection-insight", { contentId, reflectionText });
+};
+
+export const analyzeReflection = (reflectionText: string) => {
+  return apiRequest("POST", "/api/ai/analyze-reflection", { reflectionText });
+};
+
+export const getContentRecommendations = (mood?: string, timeAvailable?: number) => {
+  return apiRequest("POST", "/api/ai/recommendations", { mood, timeAvailable });
+};
+
+export const getViewingInsights = () => {
+  return apiRequest("GET", "/api/ai/viewing-insights");
+};

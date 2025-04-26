@@ -88,7 +88,7 @@ export function setupAIRoutes(app: any) {
       
       // Extract all genres from user's content
       const allGenres = userContent.flatMap(item => item.content.genres || []);
-      const preferredGenres = [...new Set(allGenres)]; // Remove duplicates
+      const preferredGenres = Array.from(new Set(allGenres)); // Remove duplicates
       
       // Generate recommendations
       const recommendationsStr = await generateContentRecommendations(
