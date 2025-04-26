@@ -1,0 +1,151 @@
+Rough notes:
+
+so i have a bunch of issues with my watching habits that I want to solve with a similar app.
+
+a) I want to be notified if a show I've watched has a new season. major apps (netflix) kinda do that but there's no visibility.
+b) I watch multiple things at a time. I want to sometimes pick things based on mood, for just an hour etc.
+c) I want to discover movies based on the cast of a movie that I have watched etc.
+d) and a bunch of other stuff
+plus a bunch of LLM-related features.
+
+social features are not my priority but they can be added later anyways.
+
+I also want active focus on sharing notes about a movie with the app (social feed for sharing with friends can come later). things like "<scene>: omg, this was so well written that I'm sweating in an air-conditioned room"
+
+like how you frantically chat with a friend after you're done watching a movie or a series.
+
+I am not much focused on comprehensive movie data right now. I am at a hackathon, so everyone know that getting movie data is possible. My goal to share my vision of enabling a better entertainment experience for the modern human where watching content (movies and shows) is a major part of our lives (that we used to do rarely 10 years ago).
+
+- 
+
+    **1. `/login` & `/signup`**
+
+    - **Title:** Login / Create Account
+    - **Purpose:** Standard user authentication.
+    - **Content:**
+        - Minimalist forms for email/password login or new account creation.
+        - Option for OAuth (Google/Apple login) for speed.
+        - Clear focus on getting the user into the core experience quickly.
+
+    ---
+
+    **2. `/home` (Your Viewing Dashboard)**
+
+    - **Title:** Home Dashboard
+    - **Purpose:** Central hub providing an overview of current activity, recent thoughts, and quick access points.
+    - **Content:**
+        - **`[Section] Currently Engaging With:`**
+            - Prominent cards/list of Movies/Shows marked "Currently Watching".
+            - Each card shows: Poster/Title, Progress Bar (for series: S02E03 / S04E10), quick link to "Add/View Reflections" (leading to `/entry/{slug}`).
+            - **Crucially:** Clear visual indicators (e.g., bright badge) for items with NEW unwatched episodes/seasons available (`+ New Season!`, `+2 Episodes`).
+        - **`[Section] What to Watch Next?`**
+            - A dynamic section suggesting 3-5 items from your Watchlist or unwatched Library items.
+            - **Filters:** Simple controls nearby to quickly filter suggestions by `Mood` (e.g., Funny, Intense, Relaxing) and `Available Time` (e.g., <1hr, 1-2hr, 2hr+). Filters apply instantly to refresh suggestions.
+            - *LLM Potential:* Suggestions can be smarter, considering recent viewing or noted preferences.
+        - **`[Section] Your Recent Reflections:`**
+            - A compact, reverse-chronological feed showing snippets of your latest 5-10 timestamped/scene notes across *all* content.
+            - Each snippet shows: Note text, Timestamp/Marker (e.g., `Movie Title @ 01:15:30` or `Show Title - S01E02`), quick link to the full reflection stream on `/entry/{slug}`. This reinforces the note-taking habit.
+        - **`[Action Bar] Quick Add:`** Simple search bar to quickly find and add a Movie/Show to track (adds to library, user can then set status).
+        - **Navigation:** Header/Sidebar with clear links to `Home`, `Library`, `Reflections`, `Discover`, `Notifications`, `Settings`.
+
+    ---
+
+    **3. `/entry/{content-slug}` (Reflection Hub & Info)**
+
+    - **Title:** {Movie/Show Title} - Reflections
+    - **Purpose:** The *core* interaction space for a specific piece of content. Combines minimal info with the primary note-taking/reflection feature.
+    - **Content:**
+        - **Header:** Title, Year, Poster. Quick action buttons: `Rate (Stars)`, `Set Status` (Watched/Watching/Watchlist), `Add to List` (future).
+        - **`[Main Feature] Reflection Stream:`** This dominates the page.
+            - **Input Area:** Large text area to type notes. Buttons nearby:
+                - `Add Note`: Submits the text.
+                - `+ Timestamp/Marker`: Opens a simple input to manually add `HH:MM:SS`, `SXXEYY`, or a brief scene description (e.g., "Opening Scene", "Final Battle"). This marker gets attached to the next note submitted. *Hackathon Simplification: Manual input is fine.*
+                - **(Optional) Quick Tags:** Buttons for common reaction tags (#MindBlown, #LOL, #WellWritten, #PlotHole, #CharacterMoment).
+            - **Note Feed:** Displays all notes for *this specific title*, chronologically, with their timestamps/markers clearly visible. Tags are displayed with the note.
+            - *LLM Potential:* An "Analyze this Note" button next to each entry could trigger insights, find related notes you've made, or suggest related themes to explore.
+        - **`[Sidebar/Accordion] Your Status:`**
+            - Your current rating for the title.
+            - Your watch status.
+            - For Shows: Clear display of current episode progress (e.g., "Watched up to S02E04"). Quick buttons to mark next episode watched.
+        - **`[Sidebar/Accordion] Quick Info:`** (Collapsed by default to keep focus on notes)
+            - Brief Synopsis.
+            - Key Cast/Crew (Names are clickable, leading to `/person/{person-slug}`).
+            - Genre tags.
+
+    ---
+
+    **4. `/reflections` (Your Global Note Feed)**
+
+    - **Title:** All Your Reflections
+    - **Purpose:** A centralized place to browse, search, and rediscover all your notes across all content.
+    - **Content:**
+        - **Infinite Scroll Feed:** All notes, reverse-chronologically. Each note shows: Text, Timestamp/Marker, Title of Movie/Show (linked to `/entry/{slug}`), Tags.
+        - **Filtering/Search Bar:**
+            - Filter by Movie/Show Title.
+            - Filter by Tag(s).
+            - Filter by Date Range.
+            - Full-text search across all your notes.
+        - *LLM Potential:* A query box for "Ask your notes..." (e.g., "What were my thoughts on plot twists in thrillers I watched?", "Summarize my notes tagged #WellWritten").
+
+    ---
+
+    **5. `/library` (Your Media Collection)**
+
+    - **Title:** Your Library
+    - **Purpose:** Overview of all tracked content, allowing filtering and sorting.
+    - **Content:**
+        - **View Toggle:** Grid (posters) / List (title + basic info).
+        - **Tabs/Filters:** `All`, `Currently Watching`, `Watchlist`, `Watched`.
+        - **Advanced Filters Sidebar:** Filter by Genre, Mood Tags (that you've applied), Rating, Content Type.
+        - Each item links to its `/entry/{slug}` page.
+        - Visual indicators for new seasons/episodes persist here.
+
+    ---
+
+    **6. `/discover` (Personalized Discovery)**
+
+    - **Title:** Discover New Content
+    - **Purpose:** Go beyond simple Browse; find content relevant to your specific tastes *and reactions*.
+    - **Content:**
+        - **`[Section] Based on Your Reflections:`**
+            - *LLM Driven:* Cards suggesting Movies/Shows based on analysis of your notes. Examples: "You frequently noted the cinematography in Movie X, you might like Movie Y known for its visuals." or "You reacted strongly (#MindBlown) to the twists in Show Z, consider Thriller A."
+        - **`[Section] Explore by Mood & Time:`** Interface similar to `/home` but searches the *entire* database (or at least highly-rated items) based on selected Mood and Time constraints.
+        - **`[Section] Explore by People:`**
+            - Search bar for Actors/Directors.
+            - Results link to `/person/{person-slug}` pages.
+            - Maybe show "People You Might Like" based on highly-rated content in your library.
+
+    ---
+
+    **7. `/person/{person-slug}` (Actor/Director Info)**
+
+    - **Title:** {Person's Name}
+    - **Purpose:** See the work of a specific creator and how it relates to your viewing.
+    - **Content:**
+        - Name, Photo, Brief Bio.
+        - **Filmography List:** Titles they are known for.
+        - **Key Feature:** Each title clearly marked with *your* status (`Watched`, `Watching`, `Watchlist`, or `+ Add to Library`). Makes it easy to see what you've missed from favourites.
+
+    ---
+
+    **8. `/notifications` (New Content Alerts)**
+
+    - **Title:** New Episodes & Seasons
+    - **Purpose:** Clear, actionable list of updates for shows you track.
+    - **Content:**
+        - Simple list format: `[Show Poster/Title] - Season X Now Available!` or `[Show Poster/Title] - SXXEYY Now Available!`.
+        - Each item links to the `/entry/{slug}` page for that show.
+        - Button to "Dismiss" notifications.
+
+    ---
+
+    **9. `/settings`**
+
+    - **Title:** Settings
+    - **Purpose:** Account and application configuration.
+    - **Content:**
+        - Account: Change email/password.
+        - Notifications: Toggle email alerts.
+        - Data: Import/Export options.
+        - Appearance: Light/Dark Mode toggle.
+        - (Future) Integrations: Link Trakt account, etc.
