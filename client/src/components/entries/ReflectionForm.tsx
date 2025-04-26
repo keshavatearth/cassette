@@ -60,6 +60,49 @@ const ReflectionForm = ({ contentId }: ReflectionFormProps) => {
     }
   });
 
+  // Request an AI-powered insight based on the reflection text
+  const handleGetInsight = () => {
+    if (!text.trim()) {
+      toast({
+        title: "Empty reflection",
+        description: "Please add some text to your reflection first.",
+        variant: "destructive"
+      });
+      return;
+    }
+    
+    // Get AI reflection insight
+    getReflectionInsight({ contentId, reflectionText: text });
+    setShowAiInsight(true);
+  };
+  
+  // Get AI-suggested tags for the reflection
+  const handleGetTags = () => {
+    if (!text.trim()) {
+      toast({
+        title: "Empty reflection",
+        description: "Please add some text to your reflection first.",
+        variant: "destructive"
+      });
+      return;
+    }
+    
+    // Analyze reflection and extract tags
+    analyzeReflection(text);
+  };
+  
+  // Apply AI-suggested tags to the reflection
+  useEffect(() => {
+    if (reflectionAnalysis && reflectionAnalysis.tags?.length > 0) {
+      // Format tags with hashtag
+      const formattedTags = reflectionAnalysis.tags.map(tag => 
+        tag.startsWith('#') ? tag : `#${tag.replace(/\s+/g, '')}`
+      );
+      setSuggestedTags(formattedTags);
+    }
+  }, [reflectionAnalysis]);
+  
+  // Add the reflection note
   const handleAddNote = () => {
     if (!text.trim()) {
       toast({
@@ -76,6 +119,10 @@ const ReflectionForm = ({ contentId }: ReflectionFormProps) => {
       timestamp,
       tags: selectedTags
     });
+    
+    // Reset AI states
+    setShowAiInsight(false);
+    setSuggestedTags([]);
   };
 
   return (
@@ -101,6 +148,49 @@ const ReflectionForm = ({ contentId }: ReflectionFormProps) => {
           </div>
         )}
         
+        {/* AI-powered insights */}
+        {showAiInsight && (
+          <div className="mb-4">
+            {isLoadingReflectionInsight ? (
+              <div className="flex items-center gap-2 text-muted-foreground p-3 bg-muted rounded-md">
+                <Loader2 className="h-4 w-4 animate-spin" />
+                <span>Generating insight...</span>
+              </div>
+            ) : reflectionInsight ? (
+              <Alert className="bg-primary/10 border-primary/20">
+                <div className="flex items-start gap-2">
+                  <Lightbulb className="h-4 w-4 text-primary mt-0.5" />
+                  <AlertDescription className="text-sm">{reflectionInsight}</AlertDescription>
+                </div>
+              </Alert>
+            ) : null}
+          </div>
+        )}
+        
+        {/* AI suggested tags */}
+        {suggestedTags.length > 0 && (
+          <div className="mb-3">
+            <div className="text-sm font-medium mb-1 flex items-center gap-1">
+              <Tag className="h-3.5 w-3.5" />
+              <span>Suggested tags:</span>
+            </div>
+            <div className="flex flex-wrap gap-1">
+              {suggestedTags.map((tag, index) => (
+                <Badge 
+                  key={index} 
+                  variant="outline" 
+                  className="cursor-pointer hover:bg-primary/10"
+                  onClick={() => setSelectedTags(prev => 
+                    prev.includes(tag) ? prev : [...prev, tag]
+                  )}
+                >
+                  {tag}
+                </Badge>
+              ))}
+            </div>
+          </div>
+        )}
+      
         <div className="flex flex-wrap items-center gap-2">
           <Button 
             onClick={handleAddNote}
@@ -116,7 +206,28 @@ const ReflectionForm = ({ contentId }: ReflectionFormProps) => {
             <i className="fas fa-clock mr-2"></i> {showTimestampInput ? 'Hide Timestamp' : 'Add Timestamp'}
           </Button>
           
-          <div className="flex flex-wrap gap-1 ml-auto">
+          <Button 
+            variant="outline"
+            size="icon"
+            className="ml-auto"
+            onClick={handleGetInsight}
+            disabled={isLoadingReflectionInsight}
+            title="Get AI insight"
+          >
+            <Lightbulb className="h-4 w-4" />
+          </Button>
+          
+          <Button 
+            variant="outline"
+            size="icon"
+            onClick={handleGetTags}
+            disabled={isLoadingAnalysis}
+            title="Suggest AI tags"
+          >
+            <Tag className="h-4 w-4" />
+          </Button>
+          
+          <div className="flex flex-wrap gap-1 ml-2">
             <ToggleGroup type="multiple" value={selectedTags} onValueChange={setSelectedTags}>
               <ToggleGroupItem value="#MindBlown" size="sm" className="px-2 py-1 text-xs">
                 #MindBlown

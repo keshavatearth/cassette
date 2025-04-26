@@ -7,6 +7,7 @@ import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Link } from "wouter";
+import GeminiRecommendations from "@/components/discover/GeminiRecommendations";
 
 const DiscoverPage = () => {
   const { toast } = useToast();
@@ -174,9 +175,44 @@ const DiscoverPage = () => {
         )}
       </section>
 
-      {/* Explore by Mood & Time */}
+      {/* AI-Powered Recommendations */}
       <section className="mb-10">
-        <h2 className="text-xl font-semibold mb-4">Explore by Mood & Time</h2>
+        <h2 className="text-xl font-semibold mb-4">AI-Powered Recommendations</h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div>
+            <GeminiRecommendations />
+          </div>
+          <div className="space-y-4">
+            <Card className="p-4">
+              <h3 className="text-lg font-medium mb-2">How it works</h3>
+              <p className="text-sm text-muted-foreground mb-3">
+                Our AI-powered recommendation system uses Google's Gemini AI to analyze your preferences and suggest content that matches your mood and available time.
+              </p>
+              <ul className="text-sm space-y-2 text-muted-foreground list-disc pl-5">
+                <li>Tell us what you're in the mood for</li>
+                <li>Set how much time you have available</li>
+                <li>Get personalized recommendations</li>
+                <li>Add recommendations to your watchlist</li>
+              </ul>
+            </Card>
+            
+            <Card className="p-4">
+              <h3 className="text-lg font-medium mb-2">Popular Moods</h3>
+              <div className="flex flex-wrap gap-2">
+                <Button variant="outline" size="sm" className="rounded-full">Something fun</Button>
+                <Button variant="outline" size="sm" className="rounded-full">Something emotional</Button>
+                <Button variant="outline" size="sm" className="rounded-full">Something thrilling</Button>
+                <Button variant="outline" size="sm" className="rounded-full">Something relaxing</Button>
+                <Button variant="outline" size="sm" className="rounded-full">Something thought-provoking</Button>
+              </div>
+            </Card>
+          </div>
+        </div>
+      </section>
+      
+      {/* Explore by Mood & Time - Legacy system */}
+      <section className="mb-10">
+        <h2 className="text-xl font-semibold mb-4">Manual Recommendations</h2>
         <div className="flex flex-wrap gap-2 mb-4">
           <div className="bg-background px-4 py-2 rounded-full shadow-sm border border-border">
             <div className="flex items-center space-x-2">
